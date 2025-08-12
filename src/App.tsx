@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // ------------------------------
 // WorkoutBuddy — Phone-first MVP (Local-first; Supabase-ready)
@@ -116,7 +116,7 @@ function round1(n: number) {
 }
 
 // Suggestion rules (auto-regulated, simple)
-function suggestNext(ex: Exercise, lastSets: SetEntry[], bodyweightKg: number) {
+function suggestNext(ex: Exercise, lastSets: SetEntry[]) {
   if (lastSets.length === 0) return { advice: "Start conservative: pick a load you can do ~8 reps with RIR 2.", nextWeight: null, nextReps: 8 };
 
   const recent = lastSets[lastSets.length - 1];
@@ -146,8 +146,10 @@ try {
     console.assert(effectiveLoadKg(bwEx, 75, 0) === 75, 'effectiveLoadKg failed for BW');
     const ex: Exercise = { id: 'bench', name: 'Bench', group: 'upper', defaultIncrement: 2.5 } as Exercise;
     const s: SetEntry = { id: '1', sessionId: 's', exerciseId: 'bench', weight: 60, reps: 8, rir: 3, timestamp: Date.now() } as SetEntry;
-    const sug = suggestNext(ex, [s], 75);
+    const sug = suggestNext(ex, [s]);
     console.assert(sug.nextWeight === 62.5, 'suggestNext increment failed');
+    const ps = parseScheme('3×6–10 @ RIR2');
+    console.assert(ps.sets === 3 && ps.repText.includes('6–10') && ps.rirText === '@ RIR 2', 'parseScheme failed');
   }
 } catch { /* ignore in prod */ }
 
@@ -253,7 +255,7 @@ export default function WorkoutBuddyApp() {
   }, [sessionSets]);
 
   const currentExercise = EXERCISES.find(e => e.id === form.exerciseId)!;
-  const suggestion = suggestNext(currentExercise, lastSetsByEx[form.exerciseId] || [], data.bodyweightKg);
+  const suggestion = suggestNext(currentExercise, lastSetsByEx[form.exerciseId] || []);
 
   // Goals progress
   const goalsProgress = useMemo(() => {
@@ -673,7 +675,7 @@ function PlannedExercises({ label, template, allSets, sessionSets, bodyweightKg,
       }
       const exHistory = allSets.filter(s => s.exerciseId === item.exerciseId).sort((a,b)=>b.timestamp-a.timestamp);
       const exMeta = EXERCISES.find(e => e.id === item.exerciseId)!;
-      const sugg = suggestNext(exMeta, exHistory.slice(0,3), bodyweightKg);
+      const sugg = suggestNext(exMeta, exHistory.slice(0,3));
       next[item.exerciseId] = {
         weight: sugg.nextWeight != null ? String(sugg.nextWeight) : "0",
         reps: String(sugg.nextReps ?? 8),
