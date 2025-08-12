@@ -66,6 +66,7 @@ const EXERCISES: Exercise[] = [
 
   // Lower — anterior & posterior options
   { id: "front_squat", name: "Front Squat", group: "lower", defaultIncrement: DEFAULT_INCREMENT },
+  { id: "squat", name: "Back Squat", group: "lower", defaultIncrement: DEFAULT_INCREMENT },
   { id: "bulgarian", name: "Bulgarian Split Squat", group: "lower", defaultIncrement: DEFAULT_INCREMENT },
   { id: "leg_press", name: "Leg Press", group: "lower", defaultIncrement: DEFAULT_INCREMENT },
   { id: "leg_ext", name: "Leg Extension", group: "lower", defaultIncrement: DEFAULT_INCREMENT },
