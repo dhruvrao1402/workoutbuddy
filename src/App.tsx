@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-
+import { supabase } from './lib/supabase';
 // ------------------------------
 // WorkoutBuddy — Phone-first MVP (Local-first; Supabase-ready)
 // - Tabs: Today / Goals / History / Templates
